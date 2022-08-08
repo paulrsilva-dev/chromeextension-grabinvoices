@@ -1,0 +1,11 @@
+{
+   "extension_description": {
+      "message": "Rend possible d'ouvrir un lien vers un fichier local en cliquant dessus."
+   },
+   "extension_name": {
+      "message": "Autoriser l'accès aux fichiers locaux"
+   },
+   "page_not_loaded": {
+      "message": "La page n'a pas chargé."
+   }
+}

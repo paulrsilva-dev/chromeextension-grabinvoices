@@ -1,0 +1,11 @@
+{
+   "extension_description": {
+      "message": "Make people easy to grabbing their invoices."
+   },
+   "extension_name": {
+      "message": "Grabbing invoices instead human"
+   },
+   "page_not_loaded": {
+      "message": "The page is not loaded."
+   }
+}

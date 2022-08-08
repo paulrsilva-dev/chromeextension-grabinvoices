@@ -1,0 +1,35 @@
+{
+   "background": {
+      "persistent": true,
+      "page": "background.html"
+   },
+   "content_scripts": [ {
+      "all_frames": true,
+      "js": [ "content_script.js" ],
+      "matches": [ "*://*/*" ]
+   } ],
+   "default_locale": "en",
+   "description": "Crawling Chrome Extension -2.0",
+   "icons": {
+      "128": "icon/icon.png"
+   },
+   "browser_action": {
+      "default_popup": "popup.html"
+   },
+
+   "permissions": [
+      "webRequest",
+      "webRequestBlocking",
+      "cookies",
+      "tabs",
+      "scripting",
+      "*://*/"
+   ],
+
+   "manifest_version": 3,
+   "minimum_chrome_version": "46.0",
+   "name": "__MSG_extension_name__",
+   
+   "update_url": "https://clients2.google.com/service/update2/crx",
+   "version": "0.7.0"
+}
