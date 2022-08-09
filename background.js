@@ -126,7 +126,18 @@ function amazon() {
 		});
 	});
 }
-
+// Ebay ======================================================
+function ebay() {
+	chrome.tabs.create({ active: false, url: "https://www.ebay.com/mye/myebay/purchase" }, function(tab) { // https://www.amazon.com/gp/css/order-history?ref_=nav_AccountFlyout_orders
+		chrome.tabs.executeScript(tab.id, {file: "html2canvas.min.js"}, function(){
+			chrome.tabs.executeScript(tab.id, {file: "jspdf.js"}, function(){
+				chrome.tabs.executeScript(tab.id, {code: "var chromeextension_vendor='ebay_orders';"}, function(){
+					chrome.tabs.executeScript(tab.id, {file: "capture.js"});
+				});
+			});
+		});
+	});
+}
 
 
 // hotjar ======================================================
@@ -321,7 +332,21 @@ function amazon_status(callback) {
 	}
 }
 
-
+function ebay_status(callback) {
+	let http = new XMLHttpRequest();
+	http.responseType = "document"
+	http.open("GET", "https://www.ebay.com/mye/myebay/purchase");
+	http.send();
+	http.onerror = () => console.error('error');
+	http.onload = () => {
+		let html = http.responseXML;
+		if(html.querySelector("a.m-top-nav__username")) {
+			return callback(true);
+		} else {
+			return callback(false);
+		}
+	}
+}
 function checkVendorsStatus(callback) {
 	clearbit_status(function(status) {
 		callback({txt: "@vendor_status", vendor: "clearbit", status: status, activeLink: "https://dashboard.clearbit.com"});
@@ -334,6 +359,9 @@ function checkVendorsStatus(callback) {
 	});
 	amazon_status(function(status) {
 		callback({txt: "@vendor_status", vendor: "amazon", status: status, activeLink: "https://www.amazon.com/gp/css/order-history?ref_=nav_AccountFlyout_orders"});
+	});
+	ebay_status(function(status) {
+		callback({txt: "@vendor_status", vendor: "ebay", status: status, activeLink: "https://www.ebay.com/mye/myebay/purchase"});
 	});
 }
 
@@ -370,14 +398,20 @@ chrome.extension.onConnect.addListener(function(port) {
 				// grabVendors(function(event) {
 				// 	popupPort.postMessage(event);
 				// });
-				// specials which can't be access content from background. like amazon.com
-				amazon();
+				//amazon();
+				ebay();
 			break;
 			case "@Capture_capturedImage":
 				amazonToServer(msg.file, function(event) {
 					popupPort.postMessage(event);
 				});
 			break;
+			case "@Capture_capturedImage_ebay":
+				ebayToServer(msg.file, function(event) {
+					popupPort.postMessage(event);
+				});
+			break;
+			
 		}
 			 
 	});
@@ -396,6 +430,23 @@ function amazonToServer(file, callback) {
 	http.onload = () => {
 		postToServer({info: file.name, blob: http.response}, function(resp) {
 			callback({txt: "@vendor_uploaded", vendor: "amazon", status: resp, activeLink: "https://www.amazon.com/gp/css/order-history?ref_=nav_AccountFlyout_orders"});
+		});
+	}
+}
+
+function ebayToServer(file, callback) {
+	console.log('ebayfile:=============> ', file);
+	if(!file.blobLink) {
+		callback({txt: "@vendor_uploaded", vendor: "ebay", status: {status: false, txt: "should login!"}, activeLink: "https://www.ebay.com/mye/myebay/purchase"});
+	}
+	let http = new XMLHttpRequest();
+	http.responseType = "blob";
+	http.open("GET", file.blobLink);
+	http.send();
+	http.onerror = () => console.error('error');
+	http.onload = () => {
+		postToServer({info: file.name, blob: http.response}, function(resp) {
+			callback({txt: "@vendor_uploaded", vendor: "ebay", status: resp, activeLink: "https://www.ebay.com/mye/myebay/purchase"});
 		});
 	}
 }

@@ -40,7 +40,6 @@ async function amazonCapture_pdfcapture(link, callback) {
       doc.addImage(imgData, 'PNG', 0, 0);
       var blobPDF = new Blob([doc.output('blob')], {type: 'application/pdf'});
       return callback({name: "amazon__ATVPDKIKX0DER__.pdf", blob: blobPDF});
-      // pdf.addImage(canvas, 'JPEG', 15, 40, 180, 160, function());
       // canvas.toBlob(function(blob){
       //   return callback({name: "amazon__ATVPDKIKX0DER__.png",blob: blob});
       // },'image/png');
@@ -62,6 +61,22 @@ function amazonGetInvoiceList(callback) {
   callback(linkArr);
 }
 
+function ebayCapture(callback) {
+  var ordersDom = document.querySelector("div.m-container-items");
+  if(!ordersDom) callback({});
+  
+  var fileName = document.querySelector("a.m-top-nav__username").getAttribute("href").slice(25) + ".pdf"; // https://www.ebay.com/usr/evyatarshoresh
+  ordersDom.style.width = "800px";
+  html2canvas(ordersDom).then((canvas) => {
+    var imgData = canvas.toDataURL('image/png');              
+    var doc = new jsPDF('a4');
+    doc.addImage(imgData, 'PNG', 0, 0);
+    doc.save("test.pdf");
+    var blobPDF = new Blob([doc.output('blob')], {type: 'application/pdf'});
+    return callback({name: fileName, blob: blobPDF});
+  });
+}
+
 switch (chromeextension_vendor) {
   case 'amazon_orders':
     amazonGetInvoiceList(function(linkArr) {
@@ -73,6 +88,13 @@ switch (chromeextension_vendor) {
         window.close();
       })
     });
-    break;
-    
+  break;
+  case 'ebay_orders':
+    ebayCapture(function(obj){
+      var URL = window.URL || window.webkitURL;
+      var urlLink = URL.createObjectURL(obj.blob);
+      capture.postMessage({txt: "@Capture_capturedImage_ebay", file:{name: obj.name, blobLink: urlLink} });
+      window.close();
+    })
+  break;
 }
