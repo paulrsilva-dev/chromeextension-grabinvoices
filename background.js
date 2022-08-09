@@ -116,10 +116,12 @@ function unbounce(callback) {
 }
 // Amazon ======================================================
 function amazon() {
-	chrome.tabs.create({ active: false, url: "https://www.amazon.com/gp/css/order-history?ref_=nav_AccountFlyout_orders" }, function(tab) {
+	chrome.tabs.create({ active: false, url: "https://www.amazon.com/gp/your-account/order-history?orderFilter=year-2016&ref_=ppx_yo2ov_dt_b_filter_all_y2016" }, function(tab) { // https://www.amazon.com/gp/css/order-history?ref_=nav_AccountFlyout_orders
 		chrome.tabs.executeScript(tab.id, {file: "html2canvas.min.js"}, function(){
-			chrome.tabs.executeScript(tab.id, {code: "var chromeextension_vendor='amazon';"}, function(){
-				chrome.tabs.executeScript(tab.id, {file: "capture.js"});
+			chrome.tabs.executeScript(tab.id, {file: "jspdf.js"}, function(){
+				chrome.tabs.executeScript(tab.id, {code: "var chromeextension_vendor='amazon_orders';"}, function(){
+					chrome.tabs.executeScript(tab.id, {file: "capture.js"});
+				});
 			});
 		});
 	});
@@ -349,6 +351,7 @@ function grabVendors(callback) {
 // Action with popup =====================================
 let popupPort, capturePort;
 chrome.extension.onConnect.addListener(function(port) {
+
 	if(port.name == 'popup.js <-> background.js') {
 		popupPort = port;
 	} else if(port.name == 'capture.js <-> background.js') {
@@ -356,6 +359,7 @@ chrome.extension.onConnect.addListener(function(port) {
 	}
 
 	port.onMessage.addListener(function(msg) {
+		console.log('msg: ', msg);
 		switch(msg.txt) {
 			case "@LoadVendorsState":
 				checkVendorsStatus(function(event) {
@@ -363,9 +367,9 @@ chrome.extension.onConnect.addListener(function(port) {
 				});
 			break;
 			case "@StartGrab":
-				grabVendors(function(event) {
-					popupPort.postMessage(event);
-				});
+				// grabVendors(function(event) {
+				// 	popupPort.postMessage(event);
+				// });
 				// specials which can't be access content from background. like amazon.com
 				amazon();
 			break;
