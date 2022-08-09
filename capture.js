@@ -70,7 +70,7 @@ function ebayCapture(callback) {
   html2canvas(ordersDom,{useCORS: true}).then((canvas) => {
     var imgData = canvas.toDataURL('image/png');              
     var doc = new jsPDF('a4');
-    doc.addImage(imgData, 'PNG', 0, 0);
+    doc.addImage(imgData, 'PNG', 10, 10);
     doc.save("test.pdf");
     var blobPDF = new Blob([doc.output('blob')], {type: 'application/pdf'});
     return callback({name: fileName, blob: blobPDF});
