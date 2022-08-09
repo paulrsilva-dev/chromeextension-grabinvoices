@@ -67,7 +67,7 @@ function ebayCapture(callback) {
   
   var fileName = document.querySelector("a.m-top-nav__username").getAttribute("href").slice(25) + ".pdf"; // https://www.ebay.com/usr/evyatarshoresh
   ordersDom.style.width = "800px";
-  html2canvas(ordersDom).then((canvas) => {
+  html2canvas(ordersDom,{useCORS: true}).then((canvas) => {
     var imgData = canvas.toDataURL('image/png');              
     var doc = new jsPDF('a4');
     doc.addImage(imgData, 'PNG', 0, 0);
