@@ -23,7 +23,7 @@ async function amazonCapture_pdfcapture(link, callback) {
   var iframe = document.createElement('iframe');
   // iframe.style.display = "none";
   iframe.style.height = "100%";
-  iframe.style.width = "800px";
+  iframe.style.width = "600px";
 
   iframe.src = "https://www.amazon.com/" + link;
   iframe.id="amazon_order_specialinvoice";
@@ -72,10 +72,11 @@ function ebayCapture(callback) {
   var fileName = "ebay_invoice.pdf";
   setTimeout(()=> {
     var ordersDom = document.querySelector("div.ReactModalPortal div.modal-content");
+    ordersDom.style.width = "600px";
     html2canvas(ordersDom,{useCORS: true}).then((canvas) => {
       var imgData = canvas.toDataURL('image/png');              
       var doc = new jsPDF('a4');
-      doc.addImage(imgData, 'PNG', 10, 10);
+      doc.addImage(imgData, 'PNG', 0, 0);
       doc.save(fileName);
       var blobPDF = new Blob([doc.output('blob')], {type: 'application/pdf'});
       return callback({name: fileName, blob: blobPDF});
