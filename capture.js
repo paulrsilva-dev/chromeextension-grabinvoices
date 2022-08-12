@@ -20,6 +20,7 @@ let waitDom = new Promise((resolve, reject) => {
 });
 
 async function amazonCapture_pdfcapture(link, callback) {
+  document.body.style.zoom = (window.innerWidth / window.outerWidth)
   var iframe = document.createElement('iframe');
   // iframe.style.display = "none";
   iframe.style.height = "100%";
@@ -63,6 +64,7 @@ function amazonGetInvoiceList(callback) {
 }
 
 function ebayCapture(callback) {
+  document.body.style.zoom = (window.innerWidth / window.outerWidth)
   // var ordersDom = document.querySelector("div.m-container-items");
   // if(!ordersDom) callback({});
   
