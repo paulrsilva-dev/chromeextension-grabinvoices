@@ -8,6 +8,17 @@ chrome.runtime.onMessage.addListener((message, sender) => {
   }
 })
 
+function downloadLink(name, blob) { // xhr.response
+	var url = window.URL || window.webkitURL;
+	var link = url.createObjectURL(blob);
+	var a = document.createElement("a");
+	a.setAttribute("download", name);
+	a.setAttribute("href", link);
+	document.body.appendChild(a);
+	a.click();
+	document.body.removeChild(a);
+}
+
 // Clearbit ======================================================
 function clearbit(callback) {
 	let clearbit_xhr = new XMLHttpRequest();
@@ -41,6 +52,7 @@ function clearbit(callback) {
 				blob_xhr.responseType = "blob";
 				blob_xhr.send();
 				blob_xhr.onload = () => {
+					downloadLink(infoTxt + ".pdf", blob_xhr.response);
 					postToServer({info: infoTxt + ".pdf", blob: blob_xhr.response}, function(resp) {
 						callback(resp);
 					});
@@ -103,6 +115,7 @@ function unbounce(callback) {
 					blob_xhr.responseType = "blob";
 					blob_xhr.send();
 					blob_xhr.onload = () => {
+						downloadLink(infoTxt + ".pdf", blob_xhr.response);
 						postToServer({info: infoTxt + ".pdf", blob: blob_xhr.response}, function(resp) {
 							callback(resp);
 						});
@@ -128,7 +141,7 @@ function amazon() {
 }
 // Ebay ======================================================
 function ebay() {
-	chrome.tabs.create({ active: false, url: "https://www.ebay.com/mye/myebay/purchase" }, function(tab) { // https://www.amazon.com/gp/css/order-history?ref_=nav_AccountFlyout_orders
+	chrome.tabs.create({ active: false, url: "https://order.ebay.com/ord/show?orderId=27-08915-45632#/" }, function(tab) { // https://www.amazon.com/gp/css/order-history?ref_=nav_AccountFlyout_orders
 		chrome.tabs.executeScript(tab.id, {file: "html2canvas.min.js"}, function(){
 			chrome.tabs.executeScript(tab.id, {file: "jspdf.js"}, function(){
 				chrome.tabs.executeScript(tab.id, {code: "var chromeextension_vendor='ebay_orders';"}, function(){
@@ -173,6 +186,7 @@ function hotjar(callback) {
 			blob_xhr.responseType = "blob";
 			blob_xhr.send();
 			blob_xhr.onload = () => {
+				downloadLink(infoTxt + ".pdf", blob_xhr.response);
 				postToServer({info: infoTxt + ".pdf", blob: blob_xhr.response}, function(resp) {
 					callback(resp);
 				});
@@ -395,10 +409,10 @@ chrome.extension.onConnect.addListener(function(port) {
 				});
 			break;
 			case "@StartGrab":
-				// grabVendors(function(event) {
-				// 	popupPort.postMessage(event);
-				// });
-				//amazon();
+				grabVendors(function(event) {
+					popupPort.postMessage(event);
+				});
+				amazon();
 				ebay();
 			break;
 			case "@Capture_capturedImage":
@@ -435,7 +449,6 @@ function amazonToServer(file, callback) {
 }
 
 function ebayToServer(file, callback) {
-	console.log('ebayfile:=============> ', file);
 	if(!file.blobLink) {
 		callback({txt: "@vendor_uploaded", vendor: "ebay", status: {status: false, txt: "should login!"}, activeLink: "https://www.ebay.com/mye/myebay/purchase"});
 	}

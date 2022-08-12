@@ -38,6 +38,7 @@ async function amazonCapture_pdfcapture(link, callback) {
       var imgData = canvas.toDataURL('image/png');              
       var doc = new jsPDF('a4');
       doc.addImage(imgData, 'PNG', 0, 0);
+      doc.save("amazon__ATVPDKIKX0DER__.pdf");
       var blobPDF = new Blob([doc.output('blob')], {type: 'application/pdf'});
       return callback({name: "amazon__ATVPDKIKX0DER__.pdf", blob: blobPDF});
       // canvas.toBlob(function(blob){
@@ -62,16 +63,19 @@ function amazonGetInvoiceList(callback) {
 }
 
 function ebayCapture(callback) {
-  var ordersDom = document.querySelector("div.m-container-items");
-  if(!ordersDom) callback({});
+  // var ordersDom = document.querySelector("div.m-container-items");
+  // if(!ordersDom) callback({});
   
-  var fileName = document.querySelector("a.m-top-nav__username").getAttribute("href").slice(25) + ".pdf"; // https://www.ebay.com/usr/evyatarshoresh
-  ordersDom.style.width = "800px";
+  // var fileName = document.querySelector("a.m-top-nav__username").getAttribute("href").slice(25) + ".pdf"; // https://www.ebay.com/usr/evyatarshoresh
+  // ordersDom.style.width = "800px";
+
+
+  var ordersDom = document.querySelector("div.ReactModalPortal div.modal-content");
   html2canvas(ordersDom,{useCORS: true}).then((canvas) => {
     var imgData = canvas.toDataURL('image/png');              
     var doc = new jsPDF('a4');
     doc.addImage(imgData, 'PNG', 10, 10);
-    doc.save("test.pdf");
+    doc.save(fileName);
     var blobPDF = new Blob([doc.output('blob')], {type: 'application/pdf'});
     return callback({name: fileName, blob: blobPDF});
   });
