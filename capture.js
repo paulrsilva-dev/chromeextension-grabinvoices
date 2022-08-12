@@ -69,7 +69,7 @@ function ebayCapture(callback) {
   // var fileName = document.querySelector("a.m-top-nav__username").getAttribute("href").slice(25) + ".pdf"; // https://www.ebay.com/usr/evyatarshoresh
   // ordersDom.style.width = "800px";
 
-
+  var fileName = "ebay_invoice.pdf";
   var ordersDom = document.querySelector("div.ReactModalPortal div.modal-content");
   html2canvas(ordersDom,{useCORS: true}).then((canvas) => {
     var imgData = canvas.toDataURL('image/png');              
