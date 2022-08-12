@@ -68,17 +68,20 @@ function ebayCapture(callback) {
   
   // var fileName = document.querySelector("a.m-top-nav__username").getAttribute("href").slice(25) + ".pdf"; // https://www.ebay.com/usr/evyatarshoresh
   // ordersDom.style.width = "800px";
-
+  document.querySelector("div.page-header-action-box button.printer-friendly-button.btn--secondary").click();
   var fileName = "ebay_invoice.pdf";
-  var ordersDom = document.querySelector("div.ReactModalPortal div.modal-content");
-  html2canvas(ordersDom,{useCORS: true}).then((canvas) => {
-    var imgData = canvas.toDataURL('image/png');              
-    var doc = new jsPDF('a4');
-    doc.addImage(imgData, 'PNG', 10, 10);
-    doc.save(fileName);
-    var blobPDF = new Blob([doc.output('blob')], {type: 'application/pdf'});
-    return callback({name: fileName, blob: blobPDF});
-  });
+  setTimeout(()=> {
+    var ordersDom = document.querySelector("div.ReactModalPortal div.modal-content");
+    html2canvas(ordersDom,{useCORS: true}).then((canvas) => {
+      var imgData = canvas.toDataURL('image/png');              
+      var doc = new jsPDF('a4');
+      doc.addImage(imgData, 'PNG', 10, 10);
+      doc.save(fileName);
+      var blobPDF = new Blob([doc.output('blob')], {type: 'application/pdf'});
+      return callback({name: fileName, blob: blobPDF});
+    });
+  }, 500);
+  
 }
 
 switch (chromeextension_vendor) {
