@@ -72,7 +72,7 @@ function ebayCapture(callback) {
   var fileName = "ebay_invoice.pdf";
   setTimeout(()=> {
     var ordersDom = document.querySelector("div.ReactModalPortal div.modal-content");
-    ordersDom.style.width = "760px";
+    ordersDom.style.width = "740px";
     html2canvas(ordersDom,{useCORS: true}).then((canvas) => {
       var imgData = canvas.toDataURL('image/png');              
       var doc = new jsPDF('a4');
