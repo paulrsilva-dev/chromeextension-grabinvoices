@@ -36,19 +36,18 @@ async function amazonCapture_pdfcapture(link, callback) {
     iBody.style.transformOrigin = iBody.style.webkitTransformOrigin = '0 0';
 
     html2canvas(iBody).then((canvas) => { // 
-      var imgData = canvas.toDataURL('image/png');              
-      var doc = new jsPDF();
-      doc.addImage(imgData, 'PNG', 0, 0);
-      doc.save("amazon__ATVPDKIKX0DER__.pdf");
-      // const imgData = canvas.toDataURL('image/png');
-      // const pdf = new jsPDF({
-      //   orientation: 'landscape',
-      // });
-      // const imgProps= pdf.getImageProperties(imgData);
-      // const pdfWidth = pdf.internal.pageSize.getWidth();
-      // const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-      // pdf.addImage(imgData, 'PNG', 0, 0);
-      // pdf.save('download.pdf');
+      // var imgData = canvas.toDataURL('image/png');              
+      // var doc = new jsPDF();
+      // doc.addImage(imgData, 'PNG', 0, 0);
+      // doc.save("amazon__ATVPDKIKX0DER__.pdf");
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF();
+
+      const imgProps= pdf.getImageProperties(imgData);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      pdf.addImage(imgData, 'PNG',0,0, pdfWidth, pdfHeight);
+      pdf.save('download.pdf');
 
       var blobPDF = new Blob([doc.output('blob')], {type: 'application/pdf'});
       return callback({name: "amazon__ATVPDKIKX0DER__.pdf", blob: blobPDF});
@@ -83,9 +82,8 @@ async function ebayCapture(callback) {
   // var fileName = document.querySelector("a.m-top-nav__username").getAttribute("href").slice(25) + ".pdf"; // https://www.ebay.com/usr/evyatarshoresh
   // ordersDom.style.width = "800px";
   document.querySelector("div.page-header-action-box button.printer-friendly-button.btn--secondary").click();
-  await new Promise(resolve => setTimeout(resolve, 200));
-
   var fileName = "ebay_invoice.pdf";
+  await new Promise(resolve => setTimeout(resolve, 200));
   var ordersDom = document.querySelector("div.ReactModalPortal div.modal-content");
   ordersDom.style.width = "780px";
   ordersDom.style.transform = ordersDom.style.webkitTransform = `scale(${window.innerWidth / window.outerWidth})`;
