@@ -49,7 +49,7 @@ async function amazonCapture_pdfcapture(link, callback) {
       pdf.addImage(imgData, 'PNG',0,0, pdfWidth, pdfHeight);
       pdf.save('download.pdf');
 
-      var blobPDF = new Blob([doc.output('blob')], {type: 'application/pdf'});
+      var blobPDF = new Blob([pdf.output('blob')], {type: 'application/pdf'});
       return callback({name: "amazon__ATVPDKIKX0DER__.pdf", blob: blobPDF});
 
       // canvas.toBlob(function(blob){
@@ -90,11 +90,15 @@ async function ebayCapture(callback) {
   ordersDom.style.transformOrigin = ordersDom.style.webkitTransformOrigin = '0 0';
 
   html2canvas(ordersDom,{useCORS: true}).then((canvas) => {
-    var imgData = canvas.toDataURL('image/png');              
-    var doc = new jsPDF();
-    doc.addImage(imgData, 'PNG', 0, 0);
-    doc.save(fileName);
-    var blobPDF = new Blob([doc.output('blob')], {type: 'application/pdf'});
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF();
+
+    const imgProps= pdf.getImageProperties(imgData);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+    pdf.addImage(imgData, 'PNG',0,0, pdfWidth, pdfHeight);
+    pdf.save(fileName);
+    var blobPDF = new Blob([pdf.output('blob')], {type: 'application/pdf'});
     return callback({name: fileName, blob: blobPDF});
   });
 
