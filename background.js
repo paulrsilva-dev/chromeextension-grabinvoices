@@ -413,7 +413,7 @@ chrome.extension.onConnect.addListener(function(port) {
 					popupPort.postMessage(event);
 				});
 				ebay(); */
-				// ebay();
+				ebay();
 				amazon();
 				
 			break;
