@@ -34,7 +34,7 @@ async function amazonCapture_pdfcapture(link, callback) {
     iBody.style.width = "780px";
     iBody.style.transform = iBody.style.webkitTransform = `scale(${window.innerWidth / window.outerWidth})`;
     iBody.style.transformOrigin = iBody.style.webkitTransformOrigin = '0 0';
-
+    await new Promise(resolve => setTimeout(resolve, 200));
     html2canvas(iBody).then((canvas) => { // 
       var imgData = canvas.toDataURL('image/png');              
       var doc = new jsPDF();
@@ -83,22 +83,23 @@ async function ebayCapture(callback) {
   // var fileName = document.querySelector("a.m-top-nav__username").getAttribute("href").slice(25) + ".pdf"; // https://www.ebay.com/usr/evyatarshoresh
   // ordersDom.style.width = "800px";
   document.querySelector("div.page-header-action-box button.printer-friendly-button.btn--secondary").click();
-  var fileName = "ebay_invoice.pdf";
-  setTimeout(()=> {
-    var ordersDom = document.querySelector("div.ReactModalPortal div.modal-content");
-    ordersDom.style.width = "780px";
-    ordersDom.style.transform = ordersDom.style.webkitTransform = `scale(${window.innerWidth / window.outerWidth})`;
-    ordersDom.style.transformOrigin = ordersDom.style.webkitTransformOrigin = '0 0';
+  await new Promise(resolve => setTimeout(resolve, 200));
 
-    html2canvas(ordersDom,{useCORS: true}).then((canvas) => {
-      var imgData = canvas.toDataURL('image/png');              
-      var doc = new jsPDF();
-      doc.addImage(imgData, 'PNG', 0, 0);
-      doc.save(fileName);
-      var blobPDF = new Blob([doc.output('blob')], {type: 'application/pdf'});
-      return callback({name: fileName, blob: blobPDF});
-    });
-  }, 300);
+  var fileName = "ebay_invoice.pdf";
+  var ordersDom = document.querySelector("div.ReactModalPortal div.modal-content");
+  ordersDom.style.width = "780px";
+  ordersDom.style.transform = ordersDom.style.webkitTransform = `scale(${window.innerWidth / window.outerWidth})`;
+  ordersDom.style.transformOrigin = ordersDom.style.webkitTransformOrigin = '0 0';
+
+  html2canvas(ordersDom,{useCORS: true}).then((canvas) => {
+    var imgData = canvas.toDataURL('image/png');              
+    var doc = new jsPDF();
+    doc.addImage(imgData, 'PNG', 0, 0);
+    doc.save(fileName);
+    var blobPDF = new Blob([doc.output('blob')], {type: 'application/pdf'});
+    return callback({name: fileName, blob: blobPDF});
+  });
+
 }
 
 switch (chromeextension_vendor) {
