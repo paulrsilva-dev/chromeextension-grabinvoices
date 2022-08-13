@@ -34,7 +34,7 @@ async function amazonCapture_pdfcapture(link, callback) {
     iBody.style.width = "780px";
     iBody.style.transform = iBody.style.webkitTransform = `scale(${window.innerWidth / window.outerWidth})`;
     iBody.style.transformOrigin = iBody.style.webkitTransformOrigin = '0 0';
-
+    await new Promise(resolve => setTimeout(resolve, 100));
     html2canvas(iBody).then((canvas) => { // 
       // var imgData = canvas.toDataURL('image/png');              
       // var doc = new jsPDF();
