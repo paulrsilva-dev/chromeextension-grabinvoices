@@ -31,11 +31,10 @@ async function amazonCapture_pdfcapture(link, callback) {
 
   var iBody = document.querySelector('#amazon_order_specialinvoice').contentWindow.document.querySelector("body");
   if (iBody) {
-    
+    iBody.style.width = "780px";
     iBody.style.transform = iBody.style.webkitTransform = `scale(${window.innerWidth / window.outerWidth})`;
     iBody.style.transformOrigin = iBody.style.webkitTransformOrigin = '0 0';
-    await new Promise(resolve => setTimeout(resolve, 200));
-    iBody.style.width = "780px";
+
     html2canvas(iBody).then((canvas) => { // 
       var imgData = canvas.toDataURL('image/png');              
       var doc = new jsPDF();
