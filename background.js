@@ -409,11 +409,13 @@ chrome.extension.onConnect.addListener(function(port) {
 				});
 			break;
 			case "@StartGrab":
-				grabVendors(function(event) {
+				/* grabVendors(function(event) {
 					popupPort.postMessage(event);
 				});
-				amazon();
+				ebay(); */
 				ebay();
+				amazon();
+				
 			break;
 			case "@Capture_capturedImage":
 				amazonToServer(msg.file, function(event) {

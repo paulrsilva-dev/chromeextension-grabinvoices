@@ -20,11 +20,7 @@ let waitDom = new Promise((resolve, reject) => {
 });
 
 async function amazonCapture_pdfcapture(link, callback) {
-  document.body.style.zoom = (window.innerWidth / window.outerWidth)
   var iframe = document.createElement('iframe');
-  // iframe.style.display = "none";
-  iframe.style.height = "100%";
-  iframe.style.width = "800px";
 
   iframe.src = "https://www.amazon.com/" + link;
   iframe.id="amazon_order_specialinvoice";
@@ -35,13 +31,28 @@ async function amazonCapture_pdfcapture(link, callback) {
 
   var iBody = document.querySelector('#amazon_order_specialinvoice').contentWindow.document.querySelector("body");
   if (iBody) {
-    html2canvas(iBody).then((canvas) => {
+    iBody.style.width = "780px";
+    iBody.style.transform = iBody.style.webkitTransform = `scale(${window.innerWidth / window.outerWidth})`;
+    iBody.style.transformOrigin = iBody.style.webkitTransformOrigin = '0 0';
+
+    html2canvas(iBody).then((canvas) => { // 
       var imgData = canvas.toDataURL('image/png');              
-      var doc = new jsPDF('a4');
+      var doc = new jsPDF();
       doc.addImage(imgData, 'PNG', 0, 0);
       doc.save("amazon__ATVPDKIKX0DER__.pdf");
+      // const imgData = canvas.toDataURL('image/png');
+      // const pdf = new jsPDF({
+      //   orientation: 'landscape',
+      // });
+      // const imgProps= pdf.getImageProperties(imgData);
+      // const pdfWidth = pdf.internal.pageSize.getWidth();
+      // const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      // pdf.addImage(imgData, 'PNG', 0, 0);
+      // pdf.save('download.pdf');
+
       var blobPDF = new Blob([doc.output('blob')], {type: 'application/pdf'});
       return callback({name: "amazon__ATVPDKIKX0DER__.pdf", blob: blobPDF});
+
       // canvas.toBlob(function(blob){
       //   return callback({name: "amazon__ATVPDKIKX0DER__.png",blob: blob});
       // },'image/png');
@@ -63,8 +74,9 @@ function amazonGetInvoiceList(callback) {
   callback(linkArr);
 }
 
-function ebayCapture(callback) {
-  document.body.style.zoom = (window.innerWidth / window.outerWidth)
+async function ebayCapture(callback) {
+  // document.body.style.zoom = (window.innerWidth / window.outerWidth);
+  // await new Promise(resolve => setTimeout(resolve, 200));
   // var ordersDom = document.querySelector("div.m-container-items");
   // if(!ordersDom) callback({});
   
@@ -74,17 +86,19 @@ function ebayCapture(callback) {
   var fileName = "ebay_invoice.pdf";
   setTimeout(()=> {
     var ordersDom = document.querySelector("div.ReactModalPortal div.modal-content");
-    ordersDom.style.width = "740px";
+    ordersDom.style.width = "780px";
+    ordersDom.style.transform = ordersDom.style.webkitTransform = `scale(${window.innerWidth / window.outerWidth})`;
+    ordersDom.style.transformOrigin = ordersDom.style.webkitTransformOrigin = '0 0';
+
     html2canvas(ordersDom,{useCORS: true}).then((canvas) => {
       var imgData = canvas.toDataURL('image/png');              
-      var doc = new jsPDF('a4');
+      var doc = new jsPDF();
       doc.addImage(imgData, 'PNG', 0, 0);
       doc.save(fileName);
       var blobPDF = new Blob([doc.output('blob')], {type: 'application/pdf'});
       return callback({name: fileName, blob: blobPDF});
     });
-  }, 500);
-  
+  }, 300);
 }
 
 switch (chromeextension_vendor) {
